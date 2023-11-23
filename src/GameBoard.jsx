@@ -1,20 +1,39 @@
+import { useState } from "react";
+
 const initialGameBoard = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
 
-const GameBoard = (props) => {
+const GameBoard = ({ playerSymbol, changeActivePlayer }) => {
+  const [gameBoard, setGameBoard] = useState(initialGameBoard);
+
+  const handleSquareClick = (rowIndex, columnIndex) => {
+    setGameBoard((previousGameBoard) => {
+      const updatedGameBoard = [
+        ...previousGameBoard.map((innerArray) => [...innerArray]),
+      ];
+      updatedGameBoard[rowIndex][columnIndex] = playerSymbol;
+      return updatedGameBoard;
+    });
+    changeActivePlayer();
+  };
+
   return (
     <ol id="game-board">
-      {initialGameBoard.map((row, rowIndex) => {
+      {gameBoard.map((row, rowIndex) => {
         return (
           <li key={rowIndex}>
             <ol>
-              {row.map((playerSymbol, columnId) => {
+              {row.map((playerSymbol, columnIndex) => {
                 return (
-                  <li key={columnId}>
-                    <button>{playerSymbol}</button>
+                  <li key={columnIndex}>
+                    <button
+                      onClick={() => handleSquareClick(rowIndex, columnIndex)}
+                    >
+                      {playerSymbol}
+                    </button>
                   </li>
                 );
               })}
