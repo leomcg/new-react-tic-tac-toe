@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Player = ({ name, symbol, isSelected }) => {
+const Player = ({ name, symbol, isSelected, onPlayerNameChange }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [playerName, setPlayerName] = useState(name);
 
@@ -9,6 +9,10 @@ const Player = ({ name, symbol, isSelected }) => {
   };
 
   const handleEditClick = () => {
+    if (isEdit) {
+      console.log(onPlayerNameChange);
+      onPlayerNameChange(symbol, playerName);
+    }
     setIsEdit((isEdit) => {
       return !isEdit;
     });
