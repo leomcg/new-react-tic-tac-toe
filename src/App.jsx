@@ -3,6 +3,7 @@ import GameBoard from "./GameBoard";
 import Player from "./Player";
 import Log from "./Log";
 import { INITIAL_GAME_BOARD, WINNING_COMBINATIONS } from "./data";
+import GameOver from "./GameOver";
 
 function getCurrentPlayer(turns) {
   let currentPlayer = "X";
@@ -16,14 +17,15 @@ function getCurrentPlayer(turns) {
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
 
-  const gameBoard = INITIAL_GAME_BOARD;
+  const gameBoard = [...INITIAL_GAME_BOARD.map((array) => [...array])];
+
   for (const turn of gameTurns) {
     const { square, player } = turn;
     const { row, column } = square;
     gameBoard[row][column] = player;
   }
 
-  let winner = "";
+  let winner = null;
   for (const combination of WINNING_COMBINATIONS) {
     const firstSquareSymbol =
       gameBoard[combination[0].row][combination[0].column];
@@ -37,9 +39,11 @@ function App() {
       firstSquareSymbol === secondSquareSymbol &&
       firstSquareSymbol === thirdSquareSymbol
     ) {
-      winner = <p>{firstSquareSymbol} won!</p>;
+      winner = firstSquareSymbol;
     }
   }
+
+  let isDraw = gameTurns.length === 9 && !winner;
 
   const currentPlayer = getCurrentPlayer(gameTurns);
 
@@ -59,6 +63,10 @@ function App() {
     });
   };
 
+  const rematchClickHandler = () => {
+    setGameTurns([]);
+  };
+
   return (
     <main>
       <div id="game-container">
@@ -75,8 +83,10 @@ function App() {
           />
         </ol>
         <GameBoard onSquareClick={handleSquareClick} board={gameBoard} />
+        {(winner || isDraw) && (
+          <GameOver winner={winner} onRematchClick={rematchClickHandler} />
+        )}
       </div>
-      {winner}
       <Log turns={gameTurns} />
     </main>
   );
